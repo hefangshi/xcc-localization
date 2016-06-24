@@ -12,7 +12,9 @@ const vm = new Vue({
     data: {
         serviceOfferings: '',
         serviceOfferingsTarget: '',
-        offeringsTarget: ''
+        offeringsTarget: '',
+        errors: [],
+        warnings: [],
     },
     computed: {
         serviceOfferingsFormatted() {
@@ -30,6 +32,8 @@ const vm = new Vue({
             });
         },
         outputFile() {
+            this.errors = [];
+            this.warnings = [];
             const data = this.formatCSV(this.offeringsTarget, OFFERINGS_TARGET_COLS, {
                 'Id': 0,
                 'Entity Type': 1,
@@ -41,15 +45,17 @@ const vm = new Vue({
                 if (line['Field Name'] === DISPLAY_LABEL_TYPE) {
                     const originIndex = this.serviceOfferingsFormatted[line['Source Value']];
                     if (originIndex === undefined) {
-                        return console.error(line['Source Value'], 'missed');
+                        return this.warnings.push('Can not find [' + line['Source Value'] + '] in original file');
                     }
                     const translated = this.serviceOfferingsTargetFormatted[originIndex];
                     if (!translated) {
-                        return console.error(line['Source Value'], 'missed');
+                        return this.errors.push('Can not find [' + line['Source Value'] + '] in translated file');
                     }
                     line['Translated Value'] = translated.displayLabel;
                     if (!data[index - 1] || data[index - 1]['Field Name'] !== DESCRIPTION_TYPE) {
-                        return console.error('wrong');
+                        this.errors = [];
+                        this.warnings = [];
+                        return this.errors.push('Offering file format is wrong, [Description] field should followed with a [DisplayLabel] field');
                     }
                     data[index - 1]['Translated Value'] = this.parseToHTML(translated.description);
                 }
