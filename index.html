@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Offering Localization</title>
+    <link rel="stylesheet" type="text/css" href="./static/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="./static/index.css">
+</head>
+<body class="localization-body" id="localization">
+    <div class="panel panel-default">
+        <div class="panel-heading">Service Offerings Original</div>
+        <div class="panel-body">
+            <textarea v-model="serviceOfferings" class="form-control input-area en-input"></textarea>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Service Offerings Translated</div>
+        <div class="panel-body">
+            <textarea v-model="serviceOfferingsTarget" class="form-control input-area en-input"></textarea>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Offering Target</div>
+        <div class="panel-body">
+            <textarea v-model="offeringsTarget" class="form-control input-area en-input"></textarea>
+        </div>
+    </div>
+    <a id="link" href="{{outputFile}}" target="_blank" download="output.csv" class="btn btn-primary process-btn">Process</a>
+    <script type="text/javascript" src="./static/vue.js"></script>
+    <script type="text/javascript" src="./static/index.js"></script>
+</body>
+</html>
