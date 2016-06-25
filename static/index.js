@@ -16,14 +16,18 @@ const OFFERING_COLS_INDEX = OFFERING_COLS.reduce((acc, key, index) => {
 const vm = new Vue({
     el: '#localization',
     data: {
-        originalFiles: '',
-        translatedFiles: '',
-        offeringsTarget: '',
+        OFFERING_COLS: OFFERING_COLS,
+        originalFiles: getLS('originalFiles') || '',
+        translatedFiles: getLS('translatedFiles') || '',
+        offeringsTarget: getLS('offeringsTarget') || '',
         errors: [],
         warnings: []
     },
     computed: {
-        outputFile() {
+        offeringData() {
+            setLS('originalFiles', this.originalFiles);
+            setLS('translatedFiles', this.translatedFiles);
+            setLS('offeringsTarget', this.offeringsTarget);
             this.errors = [];
             this.warnings = [];
             const originalIndexs = this.formatPastedCSV(this.originalFiles, LANG_FILE_COLS, {
@@ -56,7 +60,7 @@ const vm = new Vue({
                     offeringData[index - 1]['Translated Value'] = this.parseToHTML(translated.description);
                 }
             });
-            return this.offeringDataToURL(offeringData);
+            return offeringData;
         }
     },
     methods: {
@@ -108,3 +112,23 @@ const vm = new Vue({
         }
     }
 });
+
+function setLS(key, value) {
+    try {
+        if (window.localStorage) {
+            window.localStorage[key] = value;
+        }
+    } catch (e) {
+
+    }
+};
+
+function getLS(key) {
+    try {
+        if (window.localStorage) {
+            return window.localStorage[key];
+        }
+    } catch (e) {
+        return '';
+    }
+};

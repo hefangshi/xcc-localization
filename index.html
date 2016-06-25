@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="./static/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="./static/index.css">
 </head>
+
 <body class="localization-body" id="localization">
     <div class="panel panel-default">
         <div class="panel-heading">Original File</div>
@@ -26,15 +27,47 @@
         </div>
     </div>
     <div class="alert alert-danger" role="alert" v-for="error in errors">
-      <span class="sr-only">Error:</span>
-      {{error}}
+        <span class="sr-only">Error:</span> {{error}}
     </div>
     <div class="alert alert-warning" role="alert" v-for="warning in warnings">
-      <span class="sr-only">Warning:</span>
-      {{warning}}
+        <span class="sr-only">Warning:</span> {{warning}}
     </div>
-    <a id="link" href="{{outputFile}}" target="_blank" download="output.csv" class="btn btn-primary process-btn">Process</a>
+    <div class="panel panel-default">
+        <div class="panel-heading">Edit & Preview</div>
+        <div class="panel-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th v-for="col in OFFERING_COLS">{{col}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="line in offeringData" v-if="$index!==0">
+                        <td v-for="col in OFFERING_COLS">
+                            <template v-if="col == 'Source Value' || col == 'Translated Value'">
+                                <template v-if="line['Field Name']==='Description'">
+                                    <textarea v-if="col == 'Translated Value'" class="form-control edit-textarea" v-model="line[col]"></textarea>
+                                    <div class="view-textarea" v-else>{{line[col]}}</div>
+                                    <hr/>
+                                    <div class="prev-textarea" v-html="line[col]"></div>
+                                </template>
+                                <template v-else>
+                                    <input v-if="col == 'Translated Value'" class="form-control edit-input" v-model="line[col]" />
+                                    <div class="view-input" v-else>{{line[col]}}</div>
+                                </template>
+                            </template>
+                            <template v-else>
+                                {{line[col]}}
+                            </template>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a id="link" href="{{offeringDataToURL(offeringData)}}" target="_blank" download="output.csv" class="btn btn-primary process-btn">Process</a>
     <script type="text/javascript" src="./static/vue.js"></script>
     <script type="text/javascript" src="./static/index.js"></script>
 </body>
+
 </html>
