@@ -1,98 +1,95 @@
-const SERVICE_OFFERINGS_COLS = 10;
-const OFFERINGS_TARGET_COLS = 5;
+const LANG_FILE_COLS = 10;
+const OFFERING_FILE_COLS = 5;
 
 const DISPLAY_LABEL_COL = 2;
 const DESCRIPTION_COL = 3;
 
 const DISPLAY_LABEL_TYPE = 'DisplayLabel';
-const DESCRIPTION_TYPE = 'Description'
+const DESCRIPTION_TYPE = 'Description';
+
+const OFFERING_COLS = ['Id', 'Entity Type', 'Field Name', 'Source Value', 'Translated Value'];
+const OFFERING_COLS_INDEX = OFFERING_COLS.reduce((acc, key, index) => {
+    acc[key] = index;
+    return acc;
+}, {});
 
 const vm = new Vue({
     el: '#localization',
     data: {
-        serviceOfferings: '',
-        serviceOfferingsTarget: '',
+        originalFiles: '',
+        translatedFiles: '',
         offeringsTarget: '',
         errors: [],
-        warnings: [],
+        warnings: []
     },
     computed: {
-        serviceOfferingsFormatted() {
-            return this.formatCSV(this.serviceOfferings, SERVICE_OFFERINGS_COLS, {
+        outputFile() {
+            this.errors = [];
+            this.warnings = [];
+            const originalIndexs = this.formatPastedCSV(this.originalFiles, LANG_FILE_COLS, {
                 displayLabel: DISPLAY_LABEL_COL
             }).reduce((acc, data, index) => {
                 acc[data.displayLabel] = index;
                 return acc;
             }, {});
-        },
-        serviceOfferingsTargetFormatted() {
-            return this.formatCSV(this.serviceOfferingsTarget, SERVICE_OFFERINGS_COLS, {
+            const translatedData = this.formatPastedCSV(this.translatedFiles, LANG_FILE_COLS, {
                 displayLabel: DISPLAY_LABEL_COL,
                 description: DESCRIPTION_COL
             });
-        },
-        outputFile() {
-            this.errors = [];
-            this.warnings = [];
-            const data = this.formatCSV(this.offeringsTarget, OFFERINGS_TARGET_COLS, {
-                'Id': 0,
-                'Entity Type': 1,
-                'Field Name': 2,
-                'Source Value': 3,
-                'Translated Value': 4
-            });
-            data.forEach((line, index) => {
+            const offeringData = this.formatPastedCSV(this.offeringsTarget, OFFERING_FILE_COLS, OFFERING_COLS_INDEX);
+            offeringData.forEach((line, index) => {
                 if (line['Field Name'] === DISPLAY_LABEL_TYPE) {
-                    const originIndex = this.serviceOfferingsFormatted[line['Source Value']];
-                    if (originIndex === undefined) {
+                    const labelIndex = originalIndexs[line['Source Value']];
+                    if (labelIndex === undefined) {
                         return this.warnings.push('Can not find [' + line['Source Value'] + '] in original file');
                     }
-                    const translated = this.serviceOfferingsTargetFormatted[originIndex];
+                    const translated = translatedData[labelIndex];
                     if (!translated) {
                         return this.errors.push('Can not find [' + line['Source Value'] + '] in translated file');
                     }
                     line['Translated Value'] = translated.displayLabel;
-                    if (!data[index - 1] || data[index - 1]['Field Name'] !== DESCRIPTION_TYPE) {
+                    if (!offeringData[index - 1] || offeringData[index - 1]['Field Name'] !== DESCRIPTION_TYPE) {
                         this.errors = [];
                         this.warnings = [];
                         return this.errors.push('Offering file format is wrong, [Description] field should followed with a [DisplayLabel] field');
                     }
-                    data[index - 1]['Translated Value'] = this.parseToHTML(translated.description);
+                    offeringData[index - 1]['Translated Value'] = this.parseToHTML(translated.description);
                 }
             });
+            return this.offeringDataToURL(offeringData);
+        }
+    },
+    methods: {
+        dataToCSV(data, cols) {
+            return data.map((line, index) => {
+                return cols.map(key => {
+                    let col = line[key];
+                    if (/(,|")/.test(col)) {
+                        col = col.replace(/"/g, '""');
+                        col = '"' + col + '"';
+                    }
+                    return col;
+                }).join(',');
+            }).join('\r\n');
+        },
+        offeringDataToURL(offeringData) {
             let file;
             const properties = { type: 'plain/text' };
-            const outputCSV = data.map((line, index) => {
-                if (index === 0) {
-                    return line['Id'] + ',' +
-                        line['Entity Type'] + ',' +
-                        line['Field Name'] + ',' +
-                        line['Source Value'] + ',' +
-                        line['Translated Value'];
-                } else {
-                    return line['Id'] + ',' +
-                        line['Entity Type'] + ',' +
-                        line['Field Name'] + ',"' +
-                        line['Source Value'].replace(/"/g, '""') + '","' +
-                        line['Translated Value'].replace(/"/g, '""') + '"';
-                }
-            }).join('\r\n');
+            const outputCSV = this.dataToCSV(offeringData, OFFERING_COLS);
             try {
                 file = new File(['\ufeff', outputCSV], 'output.csv', properties);
             } catch (e) {
                 file = new Blob(['\ufeff', outputCSV], properties);
             }
             return URL.createObjectURL(file);
-        }
-    },
-    methods: {
+        },
         parseToHTML(content) {
-            content = content.replace(/(https?:\/\/.*?)([\)|$])/img, (m, $1, $2) => {
+            content = content.replace(/(https?:\/\/.*?)([\s|\)|$])/img, (m, $1, $2) => {
                 return '<a href="' + $1 + '">' + $1 + '</a>' + $2;
             });
-            return '<p>' + content.replace(/(\n|\r)/g, '<br>\r\n') + '</p>';
+            return '<p>' + content.replace(/(\r\n|\n|\r)/g, '<br>\r\n') + '</p>';
         },
-        formatCSV(content, total, kv) {
+        formatPastedCSV(content, total, kv) {
             let formatted = [];
             let so = content.split('\t');
             let curLine = 0;
