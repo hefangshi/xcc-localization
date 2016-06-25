@@ -3,7 +3,7 @@
 
 <head>
     <title>Offering Localization</title>
-    <link rel="stylesheet" type="text/css" href="./static/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="./static/index.css">
 </head>
 
@@ -48,8 +48,10 @@
                                 <template v-if="line['Field Name']==='Description'">
                                     <textarea v-if="col == 'Translated Value'" class="form-control edit-textarea" v-model="line[col]"></textarea>
                                     <div class="view-textarea" v-else>{{line[col]}}</div>
-                                    <hr/>
+                                    <p></p>
+                                    <span class="badge">PREV</span>
                                     <div class="prev-textarea" v-html="line[col]"></div>
+                                    <!-- <span class="glyphicon glyphicon-resize-full pull-right" aria-hidden="true"></span> -->
                                 </template>
                                 <template v-else>
                                     <input v-if="col == 'Translated Value'" class="form-control edit-input" v-model="line[col]" />
