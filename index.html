@@ -54,8 +54,7 @@
                                     <!-- <span class="glyphicon glyphicon-resize-full pull-right" aria-hidden="true"></span> -->
                                 </template>
                                 <template v-else>
-                                    <input v-if="col == 'Translated Value'" class="form-control edit-input" v-model="line[col]" />
-                                    <div class="view-input" v-else>{{line[col]}}</div>
+                                    {{line[col]}}
                                 </template>
                             </template>
                             <template v-else>
