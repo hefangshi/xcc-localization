@@ -95,12 +95,14 @@ const vm = new Vue({
             }).join('\r\n');
         },
         process(e) {
-            this.showMua();
             this.processOfferingData();
+            this.showMua();
             e.currentTarget.blur();
         },
         showMua() {
-            this.show = !this.show;
+            if (this.offeringData.length !== 0 && this.errors.length === 0 && this.warnings.length === 0) {
+                this.show = !this.show;
+            }
         },
         offeringDataToURL(offeringData) {
             let file;
