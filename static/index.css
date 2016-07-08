@@ -35,14 +35,9 @@
 
 .prev-textarea {
     overflow: auto;
+    word-wrap: break-word;
     width: 400px;
     height: 150px;
-    margin: 0;
-    padding: 0;
-}
-
-.prev-input {
-    width: 400px;
     margin: 0;
     padding: 0;
 }
