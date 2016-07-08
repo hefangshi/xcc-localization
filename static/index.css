@@ -64,6 +64,8 @@
   color: #ff6666;
 }
 
+[v-cloak] { display: none }
+
 @keyframes mua {
   0% {
     transform: scale(0);

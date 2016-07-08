@@ -30,7 +30,7 @@
         <span v-show="show" class="mua" transition="mua">Process</span>
     </button>
     
-    <div class="resultPanel" v-show="offeringData.length !== 0">
+    <div class="resultPanel" v-cloak v-show="offeringData.length !== 0">
         <div class="alert alert-danger" role="alert" v-for="error in errors">
             <span class="sr-only">Error:</span> {{error}}
         </div>
