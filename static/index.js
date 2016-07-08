@@ -13,6 +13,21 @@ const OFFERING_COLS_INDEX = OFFERING_COLS.reduce((acc, key, index) => {
     return acc;
 }, {});
 
+Vue.transition('mua', {
+  enter: function (el) {
+    el.textContent = '  Mua~ ';
+  },
+  afterEnter: function (el) {
+    el.textContent = 'Process';
+  },
+  leave: function (el) {
+    el.textContent = '  Mua~ ';
+  },
+  afterLeave: function (el) {
+    el.textContent = 'Process';
+  }
+});
+
 const vm = new Vue({
     el: '#localization',
     data: {
@@ -23,7 +38,7 @@ const vm = new Vue({
         errors: [],
         warnings: [],
         offeringData: [],
-        show: false
+        show: true
     },
     ready: function() {
         this.processOfferingData();
@@ -79,9 +94,10 @@ const vm = new Vue({
                 }).join(',');
             }).join('\r\n');
         },
-        process() {
+        process(e) {
             this.showMua();
             this.processOfferingData();
+            e.currentTarget.blur();
         },
         showMua() {
             this.show = !this.show;

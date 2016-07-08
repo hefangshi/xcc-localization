@@ -26,8 +26,10 @@
             <textarea v-model="offeringsTarget" class="form-control input-area en-input"></textarea>
         </div>
     </div>
-    <button id="link" v-on:click="process" class="btn btn-success process-btn">Process</button>
-    <span v-if="show" class="mua" transition="bounce">Mua~</span>
+    <button v-on:click.stop.prevent="process" class="btn btn-default process-btn">
+        <span v-show="show" class="mua" transition="mua">Process</span>
+    </button>
+    
     <div class="resultPanel" v-show="offeringData.length !== 0">
         <div class="alert alert-danger" role="alert" v-for="error in errors">
             <span class="sr-only">Error:</span> {{error}}

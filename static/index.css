@@ -51,45 +51,32 @@
     margin-top: 20px;
 }
 
-.mua.bounce-transition {
-    margin-left: 15px;
-    color: #ff6666;
-    font-weight: bold;
-    font-style: italic;
-    font-size: 18px;
+.mua {
+    width: 60px;
 }
 
-.bounce-transition {
-  display: none;
+.mua-transition {
+  display: inline-block !important;
 }
-.bounce-enter {
-  display: inline-block; /* otherwise scale animation won't work */
-  animation: bounce-in 1s;
+.mua-enter {
+  font-weight: bold;
+  animation: mua .5s;
+  color: #ff6666;
 }
-.bounce-leave {
-  display: inline-block; /* otherwise scale animation won't work */
-  animation: bounce-out 1s;
+.mua-leave {
+  font-weight: bold;
+  animation: mua .5s;
+  color: #ff6666;
 }
 
-@keyframes bounce-in {
+@keyframes mua {
   0% {
     transform: scale(0);
   }
   50% {
-    transform: scale(1);
+    transform: scale(1.5);
   }
   100% {
-    transform: scale(0);
-  }
-}
-@keyframes bounce-out {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
+    transform: scale(0.1);
   }
 }
