@@ -21,10 +21,15 @@ const vm = new Vue({
         translatedFiles: getLS('translatedFiles') || '',
         offeringsTarget: getLS('offeringsTarget') || '',
         errors: [],
-        warnings: []
+        warnings: [],
+        offeringData: [],
+        show: false
     },
-    computed: {
-        offeringData() {
+    ready: function() {
+        this.processOfferingData();
+    },
+    methods: {
+        processOfferingData() {
             setLS('originalFiles', this.originalFiles);
             setLS('translatedFiles', this.translatedFiles);
             setLS('offeringsTarget', this.offeringsTarget);
@@ -60,10 +65,8 @@ const vm = new Vue({
                     offeringData[index - 1]['Translated Value'] = this.parseToHTML(translated.description);
                 }
             });
-            return offeringData;
-        }
-    },
-    methods: {
+            this.offeringData = offeringData;
+        },
         dataToCSV(data, cols) {
             return data.map((line, index) => {
                 return cols.map(key => {
@@ -75,6 +78,13 @@ const vm = new Vue({
                     return col;
                 }).join(',');
             }).join('\r\n');
+        },
+        process() {
+            this.showMua();
+            this.processOfferingData();
+        },
+        showMua() {
+            this.show = !this.show;
         },
         offeringDataToURL(offeringData) {
             let file;
