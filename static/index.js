@@ -100,7 +100,7 @@ const vm = new Vue({
             e.currentTarget.blur();
         },
         showMua() {
-            if (this.offeringData.length !== 0 && this.errors.length === 0 && this.warnings.length === 0) {
+            if (this.offeringData.length !== 0) {
                 this.show = !this.show;
             }
         },
