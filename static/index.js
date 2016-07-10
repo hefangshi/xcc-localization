@@ -61,6 +61,13 @@ const vm = new Vue({
                 description: DESCRIPTION_COL
             });
             const offeringData = this.formatPastedCSV(this.offeringsTarget, OFFERING_FILE_COLS, OFFERING_COLS_INDEX);
+            // make sure table head is added
+            if (offeringData.length !== 0 && offeringData[0]['Id'] !== 'Id') {
+                offeringData.unshift(OFFERING_COLS.reduce((acc,key) => {
+                    acc[key] = key;
+                    return acc;
+                }, {}));
+            }
             offeringData.forEach((line, index) => {
                 if (line['Field Name'] === DISPLAY_LABEL_TYPE) {
                     const labelIndex = originalIndexs[line['Source Value']];
